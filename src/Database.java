@@ -1,8 +1,4 @@
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.sql.*;
-import java.util.*;
 
 
 public class Database {
@@ -132,7 +128,7 @@ public class Database {
 
     }
 
-    public void registerUser(User user) {
+    public boolean registerUser(User user) {
         String query = "INSERT INTO users (id, name, email, password, userType, organization) VALUES (?, ?, ?, ?, ?, ?)";
 
         String queryForUserExistence = "SELECT * FROM users WHERE name = ?";
@@ -164,6 +160,7 @@ public class Database {
                             st.setString(6, user.getOrganization());
 
                             st.executeUpdate();
+                            return true;
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -182,6 +179,7 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
 }

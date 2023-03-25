@@ -328,8 +328,7 @@ These are just some of the functions that the FairFlow program could have, and d
 
 
 
-kenTom
-create the functional requirements of fairflow
+
 Sure, here are some functional requirements for FairFlow:
 
 User registration and authentication: The system should allow users to create an account and authenticate their identity before accessing the system.
@@ -365,8 +364,6 @@ These are just some of the functional requirements for FairFlow, and additional 
 
 
 
-kenTom
-create fairflow use case for a developer
 Sure, here's a use case for a developer using FairFlow:
 
 Title: Developer uses FairFlow to integrate system with accounting software
@@ -404,9 +401,6 @@ This use case demonstrates how a developer can use FairFlow to integrate the sys
 
 
 
-kenTom
-lets use java. list all the classes needed their attributes and functions
-dont write getters and setters
 Sure, here's an example of how the classes in FairFlow could be structured in Java:
 
 Class: User

@@ -3,13 +3,14 @@ import javax.xml.crypto.Data;
 public class Main {
     //Main Class
     public static void main(String[] args){
-        User Steve = new User("STEVE","Steve","admin","admin","admin@corruption.com","RACSAM");
 
-        //TODO new Database().registerUser(Steve);
-        // new Database().registerOrganization(new Organization("S2RCX","kenTom","kentom@fairFlow.com","kenTom","A kenTom company","NAIROBI"));
+        //? new Database().registerOrganization(new Organization("S2RCX","kenTom","kentom@fairFlow.com","kenTom","A kenTom company","NAIROBI"));
 
         //new Database().registerFunds(new Fund(IdGenerator.autoIdLengthFix("fundId"),"Chuka Uni Fund","Funds To Test Db","RACSAM"));
-        new Database().registerCategory(new Category(IdGenerator.autoIdLengthFix("categoryId"),"OFFLINE FUNDS","FUNDS OFFERED IN CASH"));
+        //new Database().registerCategory(new Category(IdGenerator.autoIdLengthFix("categoryId"),"OFFLINE FUNDS","FUNDS OFFERED IN CASH"));
+
+        Operations operations = new Operations();
+        System.out.println(operations.registerUser("S2RCX","kenTom","kentom@fairFlow.com","kenTom","A kenTom company","RACSAM"));
 
         /*
         Initialize the FairFlowController: The main class first creates an instance of the FairFlowController, which is the class responsible for managing the different operations and functionality of the application.

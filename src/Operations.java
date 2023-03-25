@@ -5,8 +5,10 @@ import java.util.List;
 public class Operations {
 
     // method to register a new user
-    public void registerUser(String name, String email, String password) {
+    public boolean registerUser(String id, String username,String accountType, String password, String email,String organization) {
         // implementation
+        User user = new User(id,username,accountType,password,email,organization);
+        return new Database().registerUser(user);
     }
 
     // method to authenticate a user
