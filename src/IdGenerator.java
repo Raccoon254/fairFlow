@@ -6,7 +6,7 @@ public class IdGenerator {
     static String autoIdLengthFix(String name){
 //
         int autoLength;
-        if (name=="transactionId"||name=="fundId") {
+        if (name=="transactionId"||name=="fundId"||name=="reportId") {
             autoLength=10;
         }else{
             autoLength=6;

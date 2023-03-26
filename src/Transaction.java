@@ -1,14 +1,20 @@
-import java.util.Date;
-
 public class Transaction {
+    private String id;
     private double amount;
     private String description;
-    private Date date;
 
-    public Transaction(double amount, String description) {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Transaction(String id, double amount, String description) {
+        this.id = id;
         this.amount = amount;
         this.description = description;
-        this.date = new Date();
     }
 
     public void editTransaction(double amount, String description) {
@@ -19,15 +25,12 @@ public class Transaction {
         // implementation details
     }
 
-    public double getAmount() {
-        return this.amount;
+    public String getAmount() {
+        return String.valueOf(this.amount);
     }
 
     public String getDescription() {
         return this.description;
     }
 
-    public Date getDate() {
-        return this.date;
-    }
 }

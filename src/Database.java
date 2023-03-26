@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 
 public class Database {
@@ -13,7 +14,7 @@ public class Database {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void registerCategory(Category category) {
+    public boolean registerCategory(Category category) {
         String query = "INSERT INTO categories (id, name, description) VALUES (?, ?, ?)";
 
         String queryForCategoryExistence = "SELECT * FROM categories WHERE name = ?";
@@ -32,6 +33,7 @@ public class Database {
                     st.setString(3, category.getDescription());
 
                     st.executeUpdate();
+                    return true;
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -43,9 +45,33 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+    public ArrayList<ArrayList<String>> retrieveAllCategories() {
+        String query = "SELECT * FROM categories";
+
+        ArrayList<ArrayList<String>> categoriesList = new ArrayList<>();
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(query)) {
+            ResultSet resultSet = st.executeQuery();
+
+            while (resultSet.next()) {
+                ArrayList<String> category = new ArrayList<>();
+                category.add( resultSet.getString("id"));
+                category.add( resultSet.getString("name"));
+                category.add( resultSet.getString("description"));
+                categoriesList.add(category);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categoriesList;
     }
 
-    public void registerOrganization(Organization organization) {
+    public boolean registerOrganization(Organization organization) {
         String query = "INSERT INTO organizations (id, name, email, password, description, location) VALUES (?, ?, ?, ?, ?, ?)";
 
         String queryForCompanyExistence = "SELECT * FROM organizations WHERE name = ?";
@@ -67,6 +93,7 @@ public class Database {
                     st.setString(6, organization.getDescription());
 
                     st.executeUpdate();
+                    return true;
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -78,8 +105,37 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
-    public void registerFunds(Fund fund) {
+
+    public ArrayList<ArrayList<String>> getAllOrganizations() {
+        String query = "SELECT * FROM organizations";
+        ArrayList<ArrayList<String>> organizationsList = new ArrayList<>();
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(query);
+             ResultSet resultSet = st.executeQuery()) {
+
+            while (resultSet.next()) {
+                ArrayList<String> organization = new ArrayList<>();
+                organization.add(resultSet.getString("id"));
+                organization.add(resultSet.getString("name"));
+                organization.add(resultSet.getString("email"));
+                organization.add(resultSet.getString("password"));
+                organization.add(resultSet.getString("description"));
+                organization.add(resultSet.getString("location"));
+
+                organizationsList.add(organization);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return organizationsList;
+    }
+
+    public boolean registerFunds(Fund fund) {
 
         String query = "INSERT INTO funds (id, name, description, organization) VALUES (?, ?, ?, ?)";
 
@@ -109,6 +165,7 @@ public class Database {
                             st.setString(4, fund.getOrganization());
 
                             st.executeUpdate();
+                            return true;
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -126,6 +183,37 @@ public class Database {
             e.printStackTrace();
         }
 
+        return false;
+    }
+
+    public ArrayList<ArrayList<String>> getOrganizationFunds(String organizationId) {
+        String query = "SELECT * FROM funds WHERE organization = ?";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(query)) {
+            st.setString(1, organizationId);
+
+            ResultSet resultSet = st.executeQuery();
+            ArrayList<ArrayList<String>> funds = new ArrayList<>();
+
+            while (resultSet.next()) {
+                ArrayList<String> fund = new ArrayList<>();
+                fund.add(resultSet.getString("id"));
+                fund.add(resultSet.getString("name"));
+                fund.add(resultSet.getString("description"));
+                funds.add(fund);
+            }
+
+            if (!funds.isEmpty()) {
+                return funds;
+            } else {
+                System.out.println("No funds found for organization with id " + organizationId);
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean registerUser(User user) {
@@ -181,5 +269,131 @@ public class Database {
         }
         return false;
     }
+    public User authenticateUser(String username, String password) {
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE name = ? AND password = ?")) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String id = rs.getString("id");
+                String accountType = rs.getString("userType");
+                String email = rs.getString("email");
+                String organization = rs.getString("organization");
+                return new User(id, username, accountType, password, email, organization);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean registerTransaction(Transaction transaction, String fundId, String categoryId, String userId) {
+        String query = "INSERT INTO transactions (id, amount, description, fund, category, user) VALUES (?, ?, ?, ?, ?, ?)";
+
+        String queryForTransactionExistence = "SELECT * FROM transactions WHERE description = ?";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stz = conn.prepareStatement(queryForTransactionExistence)) {
+            stz.setString(1, transaction.getDescription());
+            ResultSet resultSet = stz.executeQuery();
+
+            if (!resultSet.next()) {
+                //If Transaction Doesn't Exist Register It
+                try (PreparedStatement st = conn.prepareStatement(query)) {
+
+                    st.setString(1, transaction.getId());
+                    st.setString(2, transaction.getAmount());
+                    st.setString(3, transaction.getDescription());
+                    st.setString(4, fundId);
+                    st.setString(5, categoryId);
+                    st.setString(6, userId);
+
+                    st.executeUpdate();
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+            }else {
+                System.out.println("Transaction 200 OK -- Already Exists");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public ArrayList<ArrayList<String>> getTransactionsForFund(String fundId) {
+        String query = "SELECT transactions.id, transactions.amount, transactions.description, categories.name, users.name " +
+                "FROM transactions " +
+                "INNER JOIN categories ON transactions.category = categories.id " +
+                "INNER JOIN users ON transactions.user = users.id " +
+                "WHERE transactions.fund = ?";
+
+        ArrayList<ArrayList<String>> transactions = new ArrayList<>();
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement st = conn.prepareStatement(query)) {
+            st.setString(1, fundId);
+            ResultSet resultSet = st.executeQuery();
+
+            while (resultSet.next()) {
+                ArrayList<String> transactionData = new ArrayList<>();
+                transactionData.add(resultSet.getString(1)); // Transaction ID
+                transactionData.add(resultSet.getString(2)); // Transaction Amount
+                transactionData.add(resultSet.getString(3)); // Transaction Description
+                transactionData.add(resultSet.getString(4)); // Category Name
+                transactionData.add(resultSet.getString(5)); // User Username
+
+                transactions.add(transactionData);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return transactions;
+    }
+
+    public boolean registerCorruptionCase(String reportId, String reportName, String description,String transaction, String user) {
+        String query = "INSERT INTO reports (id, report, description, transaction, userId) VALUES (?, ?, ?, ?, ?)";
+
+        String queryForTransactionExistence = "SELECT * FROM transactions WHERE id = ?";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stz = conn.prepareStatement(queryForTransactionExistence)) {
+            stz.setString(1, transaction);
+            ResultSet resultSet = stz.executeQuery();
+
+            if (resultSet.next()) {
+                //If Transaction Register The Case
+                try (PreparedStatement st = conn.prepareStatement(query)) {
+
+                    st.setString(1, reportId);
+                    st.setString(2, reportName);
+                    st.setString(3, description);
+                    st.setString(4, transaction);
+                    st.setString(5, user);
+
+                    st.executeUpdate();
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+            }else {
+                System.out.println("404 ERR :: Transaction Not Found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 }

@@ -1,16 +1,45 @@
-import javax.xml.crypto.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
-    //Main Class
+
+    //The list controls the state of the application
+    static List<ArrayList<String>> currentUserMain = new ArrayList<>();
     public static void main(String[] args){
 
         //? new Database().registerOrganization(new Organization("S2RCX","kenTom","kentom@fairFlow.com","kenTom","A kenTom company","NAIROBI"));
 
-        //new Database().registerFunds(new Fund(IdGenerator.autoIdLengthFix("fundId"),"Chuka Uni Fund","Funds To Test Db","RACSAM"));
+        //?new Database().registerFunds(new Fund(IdGenerator.autoIdLengthFix("fundId"),"Chuka Uni Fund","Funds To Test Db","RACSAM"));
         //new Database().registerCategory(new Category(IdGenerator.autoIdLengthFix("categoryId"),"OFFLINE FUNDS","FUNDS OFFERED IN CASH"));
 
         Operations operations = new Operations();
-        System.out.println(operations.registerUser("S2RCX","kenTom","kentom@fairFlow.com","kenTom","A kenTom company","RACSAM"));
+        Database db = new Database();
+
+
+        //System.out.println(db.registerCorruptionCase(IdGenerator.autoIdLengthFix("reportId"),"Test From Ide","Chuka Uni Fund Issues","H8R3DX9CGQ","S2RCX"));
+
+
+        //System.out.println(db.retrieveAllCategories());
+
+        //System.out.println(operations.getTransactionsForFund("ABCDE12345"));
+
+        //System.out.println(db.getOrganizationFunds("RACSAM"));
+
+        //?System.out.println(new IdGenerator().autoIdLengthFix("transactionId")+"HH");
+        //?String transactionId = new IdGenerator().autoIdLengthFix("transactionId");
+        //?addUserToList("Steve","admin");
+        //?new Database().registerTransaction(new Transaction( transactionId, 1500,"SENT TO COVER FUNDS"),"ABCDE12345","123SDE","S2RCX");
+        //?System.out.println(operations.registerUser("S2RCX","kenTom","kentom@fairFlow.com","kenTom","A kenTom company","RACSAM"));
+
+       //?System.out.println(new Database().getAllOrganizations());
+        //System.out.println(operations.getAllOrganizations());
+
+        /*?
+        for (ArrayList<String> row: operations.getAllOrganizations()) {
+            System.out.println(row);
+        }
+        */
+
 
         /*
         Initialize the FairFlowController: The main class first creates an instance of the FairFlowController, which is the class responsible for managing the different operations and functionality of the application.
@@ -26,6 +55,19 @@ public class Main {
         Flag transactions as potential cash misuse: Finally, the FairFlowController can be used to flag transactions that may be indicative of cash misuse, such as transactions involving large amounts of cash or those that violate other policies or regulations. These flagged transactions can be reviewed further or escalated as needed to address any potential issues.
 
       */
+    }
+
+    //Add The User To A Local List
+    private static void addUserToList(String username, String password){
+        ArrayList<String> currentUserData = new ArrayList<>();
+        User currentUser = new Operations().authenticateUser(username,password);
+        currentUserData.add(currentUser.getId());
+        currentUserData.add(currentUser.getName());
+        currentUserData.add(currentUser.getEmail());
+        currentUserData.add(currentUser.getAccountType());
+        currentUserData.add(currentUser.getOrganization());
+        currentUserData.add(currentUser.getPassword());
+        currentUserMain.add(currentUserData);
     }
 
 }

@@ -1,63 +1,85 @@
-import java.math.BigDecimal;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Operations {
 
     // method to register a new user
-    public boolean registerUser(String id, String username,String accountType, String password, String email,String organization) {
+    public boolean registerUser(String username,String accountType, String password, String email,String organization) {
         // implementation
-        User user = new User(id,username,accountType,password,email,organization);
+        User user = new User(IdGenerator.autoIdLengthFix("userId"),username,accountType,password,email,organization);
         return new Database().registerUser(user);
     }
 
     // method to authenticate a user
-    public void authenticateUser(String email, String password) {
+    public User authenticateUser(String username, String password) {
         // implementation
+        return new Database().authenticateUser(username,password);
     }
 
-    // method to create a new organization
-    public void createOrganization(String name, String description) {
+    // method to create a new organization will return true if creation success
+    public boolean createOrganization(String name, String email, String password, String description, String location) {
         // implementation
+        return new Database().registerOrganization(new Organization(IdGenerator.autoIdLengthFix("organizationId"), name, email, password, description, location));
     }
 
     // method to retrieve a list of all organizations
-    public List<Organization> getAllOrganizations() {
+    public ArrayList<ArrayList<String>> getAllOrganizations() {
         // implementation
-        return null;
+        if(!hasData(new Database().getAllOrganizations())){
+            System.out.println("Data Unavailable");
+            return null;
+        }else {
+            System.out.println("Data Detected");
+            return new Database().getAllOrganizations();
+        }
     }
 
     // method to create a new fund for an organization
-    public void createFund(String name, String description, BigDecimal balance, int organizationId) {
+    public boolean createFund(String name, String description, String organizationId) {
         // implementation
+        return new Database().registerFunds(new Fund(IdGenerator.autoIdLengthFix("fundId"),name, description, organizationId));
     }
 
     // method to retrieve a list of all funds for an organization
-    public List<Fund> getFundsForOrganization(int organizationId) {
+    public ArrayList<ArrayList<String>> getFundsForOrganization(String organizationId) {
         // implementation
-        return null;
+        if(!hasData(new Database().getOrganizationFunds(organizationId))){
+            System.out.println("Data Unavailable");
+            return null;
+        }else {
+            System.out.println("Data Detected");
+            return new Database().getOrganizationFunds(organizationId);
+        }
     }
 
     // method to create a new transaction for a fund
-    public void createTransaction(BigDecimal amount, String description, Date date, int fundId, int categoryId, int userId) {
+    public boolean createTransaction(int amount, String description, String fundId, String categoryId, String userId) {
         // implementation
+        return new Database().registerTransaction(new Transaction( IdGenerator.autoIdLengthFix("organizationId"), amount,description),fundId,categoryId,userId);
     }
 
     // method to retrieve a list of all transactions for a fund
-    public List<Transaction> getTransactionsForFund(int fundId) {
+    public ArrayList<ArrayList<String>> getTransactionsForFund(String fundId) {
         // implementation
-        return null;
+        return new Database().getTransactionsForFund(fundId);
     }
 
     // method to create a new category
-    public void createCategory(String name, String description) {
+    public boolean createCategory(String name, String description) {
         // implementation
+        return new Database().registerCategory(new Category(IdGenerator.autoIdLengthFix("categoryId"),name,description));
     }
 
     // method to retrieve a list of all categories
-    public List<Category> getAllCategories() {
+    public ArrayList<ArrayList<String>> getAllCategories() {
         // implementation
-        return null;
+        if(!hasData(new Database().retrieveAllCategories())){
+            System.out.println("Data Unavailable");
+            return null;
+        }else {
+            System.out.println("Data Detected");
+            return new Database().retrieveAllCategories();
+        }
     }
 
     // method to assign a role to a user
@@ -78,8 +100,9 @@ public class Operations {
     }
 
     // method to allow users to report corruption
-    public void reportCorruption(int transactionId, String description) {
+    public boolean reportCorruption(String caseName, String transactionId, String description) {
         // implementation
+        return new Database().registerCorruptionCase(IdGenerator.autoIdLengthFix("reportId"),"Test From Ide","Chuka Uni Fund Issues","H8R3DX9CGQ","S2RCX");
     }
 
     // method to allow managers to approve or reject transactions
@@ -91,5 +114,11 @@ public class Operations {
     public void flagCashMisuse(int transactionId, String description) {
         // implementation
     }
+
+    //Method to check if data exists in any arraylist
+    public boolean hasData(ArrayList<ArrayList<String>> arrayList) {
+        return !arrayList.isEmpty();
+    }
+
 
 }
